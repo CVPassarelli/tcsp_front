@@ -1,0 +1,130 @@
+<div class="px-10 py-10">
+  <h1></h1>
+  <form [formGroup]="form" (ngSubmit)="submitForm()">
+    <div class="grid grid-cols-3 gap-x-3 gap-y-5 items-center mb-5">
+      <div>
+        <app-input-text
+          [error]="form.controls['codigoUnidadeCompradora'].invalid && (form.controls['codigoUnidadeCompradora'].dirty)"
+          label="Codigo unidade compradora" formControlName="codigoUnidadeCompradora"></app-input-text>
+      </div>
+      <div>
+        <app-input-select
+          [error]="form.controls['tipoInstrumentoConvocatorioId'].invalid && (form.controls['tipoInstrumentoConvocatorioId'].dirty)"
+          label="Tipo instrumento convocatorio ID" formControlName="tipoInstrumentoConvocatorioId"
+          [options]="instrumentoConvocatorio"></app-input-select>
+      </div>
+      <div>
+        <app-input-select [error]="form.controls['modalidadeId'].invalid && (form.controls['modalidadeId'].dirty)"
+          label="Modalidade ID" formControlName="modalidadeId" [options]="modalidadeCompra">
+        </app-input-select>
+      </div>
+      <div>
+        <app-input-select [error]="form.controls['modoDisputaId'].invalid && (form.controls['modoDisputaId'].dirty)"
+          label="Modo disputa ID" formControlName="modoDisputaId" [options]="modoDeDisputa">
+        </app-input-select>
+      </div>
+      <div>
+        <app-input-text [error]="form.controls['numeroCompra'].invalid && (form.controls['numeroCompra'].dirty)"
+          label="Número compra" formControlName="numeroCompra"></app-input-text>
+      </div>
+      <div>
+        <app-input-number [error]="form.controls['anoCompra'].invalid && (form.controls['anoCompra'].dirty)"
+          [min]="minAnoCompra" label="Ano compra" formControlName="anoCompra"></app-input-number>
+      </div>
+      <div>
+        <app-input-text [error]="form.controls['numeroProcesso'].invalid && (form.controls['numeroProcesso'].dirty)"
+          label="Número processo" formControlName="numeroProcesso"></app-input-text>
+      </div>
+      <div>
+        <app-input-date label="Data abertura proposta" formControlName="dataAberturaProposta"></app-input-date>
+      </div>
+      <div>
+        <app-input-date label="Data encerramento proposta" formControlName="dataEncerramentoProposta"></app-input-date>
+      </div>
+      <div>
+        <app-input-select [error]="form.controls['amparoLegalId'].invalid && (form.controls['amparoLegalId'].dirty)"
+          label="Amparo legal ID" formControlName="amparoLegalId" [options]="amparoLegal"></app-input-select>
+      </div>
+      <div>
+        <app-input-text [error]="form.controls['itensCompra'].invalid && (form.controls['itensCompra'].dirty)"
+          label="Link sistema origem" formControlName="linkSistemaOrigem"></app-input-text>
+      </div>
+      <div class="pt-4">
+        <app-input-chekcbox label="SRP" formControlName="srp"></app-input-chekcbox>
+      </div>
+      <div class="pt-4">
+        <app-input-chekcbox label="Orçamento sigiloso" formControlName="orcamentoSigiloso"></app-input-chekcbox>
+      </div>
+    </div>
+    <div>
+      <app-input-textarea label="Objeto compra" formControlName="objetoCompra"></app-input-textarea>
+    </div>
+    <div>
+      <app-input-textarea label="Informação complementar" formControlName="informacaoComplementar">
+      </app-input-textarea>
+    </div>
+    <div class="w-full justify-end flex mt-3">
+      <button class="border-2 border-green-600 py-1 px-4 rounded-md bg-green-100 hover:bg-green-200 "
+        (click)="addItem()">Adicionar</button>
+    </div>
+    <div formArrayName="itensCompra" *ngFor="let item of itensCompra.controls; let i = index" class="pt-9">
+      <div [formGroupName]="i">
+        <div class="grid grid-cols-3 gap-x-3 gap-y-5 items-end mb-5 w-full">
+          <div>
+            <app-input-text label="Número item" formControlName="numeroItem" id="{{'numeroItem_' + i}}">
+            </app-input-text>
+          </div>
+          <div>
+            <app-input-select label="Material ou serviço" formControlName="materialOuServico"
+              id="{{'materialOuServico_' + i}}" [options]="planoContratacao">
+            </app-input-select>
+          </div>
+          <div>
+            <app-input-select label="Tipo beneficio ID" formControlName="tipoBeneficioId"
+              id="{{'tipoBeneficioId_' + i}}" [options]="tipoBeneficio">
+            </app-input-select>
+          </div>
+          <div>
+            <app-input-number label="Quantidade" formControlName="quantidade" id="{{'quantidade_' + i}}">
+            </app-input-number>
+          </div>
+          <div>
+            <app-input-text label="Unidade medida" formControlName="unidadeMedida" id="{{'unidadeMedida_' + i}}">
+            </app-input-text>
+          </div>
+          <div>
+            <app-input-number [min]="0.01" [step]="0.01" label="Valor unitário estimado"
+              formControlName="valorUnitarioEstimado" id="{{'valorUnitarioEstimado_' + i}}"></app-input-number>
+          </div>
+          <div>
+            <app-input-number [min]="0.01" [step]="0.01" label="Valor total" formControlName="valorTotal"
+              id="{{'valorTotal_' + i}}"></app-input-number>
+          </div>
+          <div>
+            <app-input-select label="Criterio julgamento ID" formControlName="criterioJulgamentoId"
+              id="{{'criterioJulgamentoId_' + i}}" [options]="criterioJulgamento">
+            </app-input-select>
+          </div>
+          <div class="pb-2">
+            <app-input-chekcbox label="Incentivo produtivo básico" formControlName="incentivoProdutivoBasico"
+              id="{{'incentivoProdutivoBasico_' + i}}"></app-input-chekcbox>
+          </div>
+        </div>
+        <div>
+          <app-input-textarea label="Descricao" formControlName="descricao" id="{{'descricao_' + i}}">
+          </app-input-textarea>
+        </div>
+        <div class="flex justify-end mt-2"><button
+            class="border-2 border-red-600 py-1 px-4 rounded-md bg-red-100 hover:bg-red-200 cursor-pointer"
+            (click)="removeUser(i)">Remover</button></div>
+
+      </div>
+    </div>
+
+    <div class="w-full justify-end flex mt-5">
+      <button
+        class="border-2 border-blue-600 py-1 px-4 rounded-md bg-blue-100 hover:bg-blue-200 cursor-pointer disabled:bg-slate-300 disabled:border-slate-600 disabled:cursor-not-allowed"
+        [disabled]="this.form.invalid">Save</button>
+    </div>
+  </form>
+</div>
