@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   inject,
   OnDestroy,
@@ -47,8 +48,8 @@ import { InputNumberComponent } from 'src/app/shared/components/forms/input-numb
 import { InputTextAreaComponent } from 'src/app/shared/components/forms/input-textarea/input-textarea.component';
 import { dateToInput, inputToIsoDate } from 'src/app/shared/classes/utils';
 import { ActivatedRoute, Route, Router } from '@angular/router';
-import { RequestServiceService } from 'src/app/core/services/request-service.service';
 import { HttpClientModule } from '@angular/common/http';
+import { RequestServiceService } from 'src/app/core/services/request-service.service';
 
 @Component({
   selector: 'app-new-request',
@@ -75,6 +76,7 @@ import { HttpClientModule } from '@angular/common/http';
 })
 export class NewRequestComponent implements OnInit, OnDestroy {
   subscription = new Subscription();
+  changeDetectorRef = inject(ChangeDetectorRef);
 
   instrumentoConvocatorio = instrumentoConvocatorio;
   modalidadeCompra = modalidadeCompra;
@@ -123,7 +125,8 @@ export class NewRequestComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
-    private service: RequestServiceService
+    private service: RequestServiceService,
+    private router: Router
   ) {}
 
   haveParam: boolean = false;
@@ -133,12 +136,10 @@ export class NewRequestComponent implements OnInit, OnDestroy {
     this.haveParam = !!this.activatedRoute.snapshot.params['id'];
     if (this.haveParam) {
       this.purchaseId = this.activatedRoute.snapshot.params['id'];
-      const subscriber = this.service
-        .getPurchaseById(this.purchaseId)
-        .subscribe((payload) => {
-          this.handleFormInitialState(payload);
-        });
-      this.subscription.add(subscriber);
+      this.service.getPurchaseById(this.purchaseId).subscribe((payload) => {
+        this.handleFormInitialState(payload);
+      });
+      //this.subscription.add(subscriber);
     }
   }
 
@@ -184,19 +185,27 @@ export class NewRequestComponent implements OnInit, OnDestroy {
       ),
     };
     if (this.haveParam) {
-      const sub = this.service.updatePurchase(payload).subscribe();
+      const sub = this.service
+        .updatePurchase(payload)
+        .subscribe((_) => this.router.navigateByUrl('/auth/listagem'));
       this.subscription.add(sub);
     } else {
-      const sub = this.service.createPurchase(payload).subscribe();
+      const sub = this.service
+        .createPurchase(payload)
+        .subscribe((_) => this.router.navigateByUrl('/auth/listagem'));
       this.subscription.add(sub);
     }
   }
 
   handleFormInitialState(payload) {
+    console.log('here');
     const keys = Object.keys(this.form.controls);
+    this.changeDetectorRef.markForCheck();
 
     keys.map((key) => {
+      console.log(payload[key]);
       this.form.controls[key].patchValue(payload[key]);
+      console.log(this.form.controls[key].value);
     });
 
     this.form.controls['dataAberturaProposta'].patchValue(
@@ -212,5 +221,6 @@ export class NewRequestComponent implements OnInit, OnDestroy {
         payload['itensCompra'][index]
       );
     }
+    //this.changeDetectorRef.checkNoChanges()
   }
 }

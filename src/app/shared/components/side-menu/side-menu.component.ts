@@ -13,9 +13,14 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 })
 export class SideMenuComponent {
   toggle: boolean = true;
+  tootleSubmenu: boolean = false;
   faCircleArrowRight = faCircleArrowRight;
 
   toggleMenu() {
     this.toggle = !this.toggle;
+  }
+
+  toggleSubmenu() {
+    this.tootleSubmenu = !this.tootleSubmenu;
   }
 }
