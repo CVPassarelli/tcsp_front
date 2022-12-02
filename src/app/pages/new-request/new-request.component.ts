@@ -15,7 +15,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { map, Subscription, tap, throwIfEmpty } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { InputChekcboxComponent } from 'src/app/shared/components/forms/input-chekcbox/input-chekcbox.component';
 import { InputDateComponent } from 'src/app/shared/components/forms/input-date/input-date.component';
 import { InputRadioComponent } from 'src/app/shared/components/forms/input-radio/input-radio.component';
@@ -75,8 +75,8 @@ import { RequestServiceService } from 'src/app/core/services/request-service.ser
   ],
 })
 export class NewRequestComponent implements OnInit, OnDestroy {
-  subscription = new Subscription();
   changeDetectorRef = inject(ChangeDetectorRef);
+  subscription = new Subscription();
 
   instrumentoConvocatorio = instrumentoConvocatorio;
   modalidadeCompra = modalidadeCompra;
@@ -101,10 +101,7 @@ export class NewRequestComponent implements OnInit, OnDestroy {
   minAnoCompra: number = new Date().getFullYear();
 
   form: FormGroup = this.fb.group({
-    codigoUnidadeCompradora: [
-      '1 Tribunal de Constas Estado de São Paulo!',
-      Validators.required,
-    ],
+    codigoUnidadeCompradora: ['TCESP', Validators.required],
     tipoInstrumentoConvocatorioId: [null, Validators.required],
     modalidadeId: ['', Validators.required],
     modoDisputaId: ['', Validators.required],
@@ -136,10 +133,12 @@ export class NewRequestComponent implements OnInit, OnDestroy {
     this.haveParam = !!this.activatedRoute.snapshot.params['id'];
     if (this.haveParam) {
       this.purchaseId = this.activatedRoute.snapshot.params['id'];
-      this.service.getPurchaseById(this.purchaseId).subscribe((payload) => {
-        this.handleFormInitialState(payload);
-      });
-      //this.subscription.add(subscriber);
+      const subscriber = this.service
+        .getPurchaseById(this.purchaseId)
+        .subscribe((payload) => {
+          this.handleFormInitialState(payload);
+        });
+      this.subscription.add(subscriber);
     }
   }
 
@@ -161,7 +160,7 @@ export class NewRequestComponent implements OnInit, OnDestroy {
 
   createNewItem(): FormGroup {
     return this.fb.group({
-      numeroItem: ['', Validators.required],
+      numeroItem: [this.itensCompra.length + 1, Validators.required],
       materialOuServico: ['', Validators.required],
       tipoBeneficioId: ['', Validators.required],
       incentivoProdutivoBasico: [false],
@@ -186,7 +185,7 @@ export class NewRequestComponent implements OnInit, OnDestroy {
     };
     if (this.haveParam) {
       const sub = this.service
-        .updatePurchase(payload)
+        .updatePurchase(payload, this.purchaseId)
         .subscribe((_) => this.router.navigateByUrl('/auth/listagem'));
       this.subscription.add(sub);
     } else {
@@ -198,14 +197,10 @@ export class NewRequestComponent implements OnInit, OnDestroy {
   }
 
   handleFormInitialState(payload) {
-    console.log('here');
     const keys = Object.keys(this.form.controls);
-    this.changeDetectorRef.markForCheck();
 
-    keys.map((key) => {
-      console.log(payload[key]);
+    keys.forEach((key) => {
       this.form.controls[key].patchValue(payload[key]);
-      console.log(this.form.controls[key].value);
     });
 
     this.form.controls['dataAberturaProposta'].patchValue(
@@ -221,6 +216,6 @@ export class NewRequestComponent implements OnInit, OnDestroy {
         payload['itensCompra'][index]
       );
     }
-    //this.changeDetectorRef.checkNoChanges()
+    this.changeDetectorRef.detectChanges();
   }
 }

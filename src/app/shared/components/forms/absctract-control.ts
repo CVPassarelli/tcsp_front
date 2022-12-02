@@ -1,4 +1,10 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  inject,
+  Input,
+  ViewChild,
+} from '@angular/core';
 import {
   ControlValueAccessor,
   FormControl,
@@ -27,6 +33,8 @@ export class AbstractControlsForm implements ControlValueAccessor {
 
   constructor() {}
 
+  changeDetectorRef = inject(ChangeDetectorRef);
+
   setValue(value: any) {
     this.onChange(value.target.value);
   }
@@ -37,10 +45,12 @@ export class AbstractControlsForm implements ControlValueAccessor {
 
   writeValue(value: any): void {
     this.value = value;
+    this.changeDetectorRef.detectChanges();
   }
 
   registerOnChange(fn: any): void {
     this.onChange = fn;
+    this.changeDetectorRef.detectChanges();
   }
 
   registerOnTouched(fn: any): void {

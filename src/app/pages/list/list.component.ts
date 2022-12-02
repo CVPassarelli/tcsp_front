@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsDependenciesModule } from 'src/app/shared/components/forms/forms.module';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -25,6 +31,7 @@ import { Observable, Subscription, tap } from 'rxjs';
   ],
 })
 export class ListComponent {
+  changeDetectorRef = inject(ChangeDetectorRef);
   faTrash = faTrash;
   faEdit = faEdit;
   faPlus = faPlus;
@@ -46,6 +53,7 @@ export class ListComponent {
       .pipe(
         tap((_) => {
           this.getPurchaseList();
+          this.changeDetectorRef.detectChanges();
         })
       )
       .subscribe();

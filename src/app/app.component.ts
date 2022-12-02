@@ -5,5 +5,5 @@ import { Component } from '@angular/core';
   templateUrl: './app.component.html',
 })
 export class AppComponent {
-  title = 'tjpncp';
+  title = 'Tribunal de contas do Estado de São Paulo';
 }
