@@ -1,0 +1,13 @@
+<ng-container *ngIf="toasty$ | async as toastyType">
+  <div class="fixed top-20 right-0 z-50 border-2 py-4 px-10 max-w-sm text-center" [ngClass]="{
+  ' border-green-400 bg-green-300' : toastyType === 'SUCCESS',
+  ' border-red-500 bg-red-300' : toastyType ==='ERROR'}">
+    <ng-container *ngIf="toastyType === 'SUCCESS'; else erroMessage">
+      <p>Sua requisição foi processada com sucesso!</p>
+    </ng-container>
+    <ng-template #erroMessage>
+      <p>Erro ao processar a sua requisição. Tente novamente em alguns instantes</p>
+    </ng-template>
+
+  </div>
+</ng-container>

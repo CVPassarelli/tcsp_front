@@ -50,6 +50,7 @@ import { dateToInput, inputToIsoDate } from 'src/app/shared/classes/utils';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { RequestServiceService } from 'src/app/core/services/request-service.service';
+import { ToastyService } from 'src/app/shared/components/toasty/toasty.service';
 
 @Component({
   selector: 'app-new-request',
@@ -101,7 +102,10 @@ export class NewRequestComponent implements OnInit, OnDestroy {
   minAnoCompra: number = new Date().getFullYear();
 
   form: FormGroup = this.fb.group({
-    codigoUnidadeCompradora: ['TCESP', Validators.required],
+    codigoUnidadeCompradora: [
+      { value: 'TRIBUNAL DE CONTAS DO ESTADO DE SÃO PAULO', disabled: true },
+      Validators.required,
+    ],
     tipoInstrumentoConvocatorioId: [null, Validators.required],
     modalidadeId: ['', Validators.required],
     modoDisputaId: ['', Validators.required],
@@ -123,7 +127,8 @@ export class NewRequestComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
     private service: RequestServiceService,
-    private router: Router
+    private router: Router,
+    private toastyService: ToastyService
   ) {}
 
   haveParam: boolean = false;
@@ -160,6 +165,7 @@ export class NewRequestComponent implements OnInit, OnDestroy {
 
   createNewItem(): FormGroup {
     return this.fb.group({
+      id: [null],
       numeroItem: [this.itensCompra.length + 1, Validators.required],
       materialOuServico: ['', Validators.required],
       tipoBeneficioId: ['', Validators.required],
@@ -175,29 +181,36 @@ export class NewRequestComponent implements OnInit, OnDestroy {
 
   submitForm() {
     const payload = {
-      ...this.form.value,
+      ...this.form.getRawValue(),
       dataEncerramentoProposta: inputToIsoDate(
         this.form.controls['dataEncerramentoProposta'].value
       ),
       dataAberturaProposta: inputToIsoDate(
         this.form.controls['dataAberturaProposta'].value
       ),
+      codigoUnidadeCompradora: '521',
     };
     if (this.haveParam) {
       const sub = this.service
         .updatePurchase(payload, this.purchaseId)
-        .subscribe((_) => this.router.navigateByUrl('/auth/listagem'));
+        .subscribe((_) => {
+          this.toastyService.show('SUCCESS');
+          this.router.navigateByUrl('/auth/listagem');
+        });
       this.subscription.add(sub);
     } else {
-      const sub = this.service
-        .createPurchase(payload)
-        .subscribe((_) => this.router.navigateByUrl('/auth/listagem'));
+      const sub = this.service.createPurchase(payload).subscribe((_) => {
+        this.toastyService.show('SUCCESS');
+        this.router.navigateByUrl('/auth/listagem');
+      });
       this.subscription.add(sub);
     }
   }
 
   handleFormInitialState(payload) {
-    const keys = Object.keys(this.form.controls);
+    const keys = Object.keys(this.form.controls).filter(
+      (key) => key === 'codigoUnidadeCompradora'
+    );
 
     keys.forEach((key) => {
       this.form.controls[key].patchValue(payload[key]);

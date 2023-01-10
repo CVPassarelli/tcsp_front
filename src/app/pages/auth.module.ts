@@ -7,6 +7,7 @@ const routes: Routes = [
   {
     path: '',
     component: AuthComponent,
+
     children: [
       {
         path: 'listagem',
@@ -28,10 +29,24 @@ const routes: Routes = [
           ),
       },
       {
-        path: 'anexar-comprovante',
+        path: 'anexar-comprovante/:id',
         loadComponent: () =>
           import('./attachment/attachment.component').then(
             (m) => m.AttachmentComponent
+          ),
+      },
+      {
+        path: 'lista-comprovante',
+        loadComponent: () =>
+          import('./attachment-list/attachment-list.component').then(
+            (m) => m.AttachmentListComponent
+          ),
+      },
+      {
+        path: 'lista-emissao',
+        loadComponent: () =>
+          import('./listagem-emissao/listagem-emissao.component').then(
+            (m) => m.ListagemEmissaoComponent
           ),
       },
     ],

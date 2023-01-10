@@ -7,6 +7,8 @@ import { AppComponent } from './app.component';
 import { HeaderComponent } from './shared/components';
 import { FooterComponent } from './shared/components';
 import { SideMenuComponent } from './shared/components';
+import { ToastyComponent } from './shared/components/toasty/toasty.component';
+import { ToastyService } from './shared/components/toasty/toasty.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -17,8 +19,9 @@ import { SideMenuComponent } from './shared/components';
     FooterComponent,
     SideMenuComponent,
     FontAwesomeModule,
+    ToastyComponent,
   ],
-  providers: [],
+  providers: [ToastyService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

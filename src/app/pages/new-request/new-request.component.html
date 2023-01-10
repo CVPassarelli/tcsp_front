@@ -70,6 +70,7 @@
     <div formArrayName="itensCompra" *ngFor="let item of itensCompra.controls; let i = index" class="pt-9">
       <div [formGroupName]="i">
         <div class="grid grid-cols-3 gap-x-3 gap-y-5 items-end mb-5 w-full">
+          <input type="hidden" formControlName="id">
           <div>
             <app-input-text label="Número item" formControlName="numeroItem" id="{{'numeroItem_' + i}}">
             </app-input-text>
