@@ -10,7 +10,7 @@ export class ToastyService {
     this.toastySubject$.next(message);
     setTimeout(() => {
       this.hide();
-    }, 3000);
+    }, 5000);
   }
 
   hide() {
