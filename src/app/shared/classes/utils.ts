@@ -4,5 +4,5 @@ export function dateToInput(date: string) {
 
 export function inputToIsoDate(date: string) {
   const dateContent = new Date(date);
-  return dateContent.toISOString();
+  return dateContent.toISOString().split('.')[0];
 }
