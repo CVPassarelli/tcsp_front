@@ -44,7 +44,7 @@ export class ListComponent {
   purchaseList$: Observable<any>;
 
   getPurchaseList() {
-    this.purchaseList$ = this.service.getPurchaseList();
+    this.purchaseList$ = this.service.getPurchaseList('DRAFT');
   }
 
   deleteitem(purchaseCode: string) {

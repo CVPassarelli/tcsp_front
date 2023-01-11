@@ -34,6 +34,6 @@ export class AttachmentListComponent {
   purchaseList$: Observable<any>;
 
   getPurchaseList() {
-    this.purchaseList$ = this.service.getPurchaseList();
+    this.purchaseList$ = this.service.getPurchaseList('DRAFT');
   }
 }

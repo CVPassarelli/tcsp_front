@@ -209,7 +209,7 @@ export class NewRequestComponent implements OnInit, OnDestroy {
 
   handleFormInitialState(payload) {
     const keys = Object.keys(this.form.controls).filter(
-      (key) => key === 'codigoUnidadeCompradora'
+      (key) => key !== 'codigoUnidadeCompradora'
     );
 
     keys.forEach((key) => {

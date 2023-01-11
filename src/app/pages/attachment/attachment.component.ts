@@ -27,7 +27,7 @@ import {
   Subscription,
   switchMap,
 } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RequestServiceService } from 'src/app/core/services/request-service.service';
 import { tipoDocumento } from '../new-request/domains';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -104,7 +104,8 @@ export class AttachmentComponent implements OnInit {
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
     private service: RequestServiceService,
-    private toastyService: ToastyService
+    private toastyService: ToastyService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -136,12 +137,6 @@ export class AttachmentComponent implements OnInit {
   }
 
   selectFile(event, index: number) {
-    console.log(
-      (<FormArray>this.form.get('arquivos')).controls[index].get(
-        'tipoDocumento'
-      ).value,
-      index
-    );
     const file = event.target.files[0];
     if (this.validateFileType(file.name)) {
       console.log(this.validateFileType(file.name));
@@ -155,30 +150,25 @@ export class AttachmentComponent implements OnInit {
         this.changeDetectorRef.detectChanges();
       });
     }
-    // this.inputFiles.nativeElement.value = '';
   }
 
   submitForm() {
-    console.log(this.form);
     this.convertedFileList.forEach((file, index) => {
       file['tipoDocumento'] = (<FormArray>this.form.get('arquivos')).controls[
         index
       ].get('tipoDocumento').value;
     });
-    console.log(this.convertedFileList);
     this.service
       .uploadFiles(this.convertedFileList, this.purchaseId)
       .pipe(
         switchMap(() => {
           merge(this.files$, this.handleDocuments(this.purchaseId));
+          this.toastyService.show('SUCCESS');
+          this.router.navigateByUrl('/auth/lista-comprovante');
           return EMPTY;
         })
       )
-      .subscribe((value) => {
-        console.log(value);
-        this.toastyService.show('SUCCESS');
-      });
-    console.log(this.form.value);
+      .subscribe((value) => {});
   }
 
   validateFileType(fileName: string) {
@@ -227,6 +217,7 @@ export class AttachmentComponent implements OnInit {
       .pipe(
         switchMap(() => {
           merge(this.files$, this.handleDocuments(this.purchaseId));
+          this.toastyService.show('SUCCESS');
           return EMPTY;
         })
       )

@@ -1,6 +1,12 @@
 <div class="shadow-md min-h-screen">
-  <h1 class="text-center mb-8 mt-5 font-bold text-2xl">Anexar documentos</h1>
-  <ng-container *ngIf="emissionList$ | async as emissionList; else noItems">
+  <h1 class="text-center mb-8 mt-5 font-bold text-2xl">Listagem de emissão</h1>
+  <div class="w-full flex justify-end mb-3">
+    <button class="border border-green-600 py-1 px-4 rounded-md bg-green-100 hover:bg-green-200 flex items-center "
+      [disabled]="selectedList.length === 0" (click)="emitir()">
+      Emitir itens selecionados
+    </button>
+  </div>
+  <ng-container *ngIf=" emissionList$ | async as emissionList; else noItems">
     <table class="w-full table-auto border-collapse border border-slate-300">
       <thead class="bg-slate-200">
         <tr>
@@ -8,18 +14,20 @@
           <th class="px-3 py-2">Nº processo</th>
           <th class="px-3 py-2">Nº compra</th>
           <th class="px-3 py-2">Objeto compra</th>
-          <th class="px-3 py-2">Upload/editar</th>
+          <th class="px-3 py-2">Status</th>
         </tr>
       </thead>
       <tbody>
 
         <tr *ngFor="let emissionItem of emissionList; let i = index" class="hover:bg-blue-100">
           <td class="text-center px-3 py-2">
-            <input type="checkbox" id="{{i}}_item" [(ngModel)]="selectedList" (change)="teste()">
+            <input type="checkbox" id="{{i}}_item" (change)="toggleItem(emissionItem.id)"
+              [disabled]="emissionItem.status === 'SENT'">
           </td>
           <td class="text-center px-3 py-2">{{emissionItem.numeroProcesso}}</td>
           <td class="text-center px-3 py-2">{{emissionItem.numeroCompra}}</td>
           <td class="text-center px-3 py-2">{{emissionItem.objetoCompra}}</td>
+          <td class="text-center px-3 py-2">{{statusToString(emissionItem.status)}}</td>
         </tr>
 
       </tbody>
